@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/url"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -16,23 +15,17 @@ import (
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	// Parse form data from the request body
-	parsedFormData, err := url.ParseQuery(request.Body)
-	if err != nil {
-		log.Printf("Error parsing form data: %s", err)
-		return events.APIGatewayProxyResponse{StatusCode: 400, Headers: map[string]string{
-			"Access-Control-Allow-Origin":      "*",
-			"Access-Control-Allow-Credentials": "true",
-		}}, err
-	}
+	queryParams := request.QueryStringParameters
 
-	destination := parsedFormData.Get("destination")
-	budget := parsedFormData.Get("budget")
-	activityLevel := parsedFormData.Get("activityLevel")
-	activityTypes := parsedFormData.Get("activityTypes")
-	resturantTypes := parsedFormData.Get("resturantTypes")
-	radiusMiles := parsedFormData.Get("radiusMiles")
-	numDays := parsedFormData.Get("numDays")
+	destination := queryParams["destination"]
+	budget := queryParams["budget"]
+	activityLevel := queryParams["activityLevel"]
+	activityTypes := queryParams["activityTypes"]
+	resturantTypes := queryParams["resturantTypes"]
+	radiusMiles := queryParams["radiusMiles"]
+	numDays := queryParams["numDays"]
 
+	fmt.Printf("activityTypes: %s, radiusMiles %s", activityTypes, radiusMiles)
 	apiKey := os.Getenv("api_key")
 
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
@@ -135,6 +128,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	session.History = []*genai.Content{}
 
 	prompt := fmt.Sprintf(os.Getenv("prompt"), destination, budget, activityLevel, activityTypes, resturantTypes, radiusMiles, numDays)
+	fmt.Printf(prompt)
 	resp, err := session.SendMessage(ctx, genai.Text(prompt))
 	if err != nil {
 		log.Fatalf("Error sending message: %v", err)
