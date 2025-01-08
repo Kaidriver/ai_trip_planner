@@ -68,7 +68,16 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				Type: genai.TypeNumber,
 			},
 			"hotel": {
-				Type: genai.TypeString,
+				Type: genai.TypeObject,
+				Properties: map[string]*genai.Schema{
+					"name": {
+						Type: genai.TypeString,
+					},
+					"description": {
+						Type: genai.TypeString,
+					},
+				},
+				Required: []string{"name", "description"},
 			},
 			"breakfast": {
 				Type: genai.TypeObject,
@@ -82,7 +91,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				},
 				Required: []string{"name", "description"},
 			},
-			"morning_activities": {
+			"morningActivities": {
 				Type:  genai.TypeArray,
 				Items: activitySchema,
 			},
@@ -98,7 +107,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				},
 				Required: []string{"name", "description"},
 			},
-			"afternoon_activities": {
+			"afternoonActivities": {
 				Type:  genai.TypeArray,
 				Items: activitySchema,
 			},
@@ -114,12 +123,12 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				},
 				Required: []string{"name", "description"},
 			},
-			"night_activities": {
+			"nightActivities": {
 				Type:  genai.TypeArray,
 				Items: activitySchema,
 			},
 		},
-		Required: []string{"day", "hotel", "breakfast", "morning_activities", "lunch", "afternoon_activities", "dinner", "night_activities"},
+		Required: []string{"day", "hotel", "breakfast", "morningActivities", "lunch", "afternoonActivities", "dinner", "nightActivities"},
 	}
 	model.ResponseSchema = &genai.Schema{
 		Type:  genai.TypeArray,

@@ -8,11 +8,11 @@
             </UFormGroup>
 
             <UFormGroup label="Budget" name="budget">
-                <USelect v-model="state.budget" :options="levels" placeholder=""/>
+                <USelect v-model="state.budget" :options="levels" placeholder=" "/>
             </UFormGroup>
 
             <UFormGroup label="Activity Level" name="activityLevel">
-                <USelect v-model="state.activityLevel" :options="levels" placeholder=""/>
+                <USelect v-model="state.activityLevel" :options="levels" placeholder=" "/>
             </UFormGroup>
 
             <UFormGroup label="Activity Type" name="activityTypes">
@@ -61,7 +61,7 @@
     const state = reactive({
         destination: undefined,
         budget: undefined,
-        activityLevel: undefined,
+        activityLevel: "",
         activityTypes: undefined,
         resturantTypes: undefined,
         radiusMiles: undefined,
