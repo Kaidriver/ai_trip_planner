@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -16,12 +17,13 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 	// Parse form data from the request body
 	queryParams := request.QueryStringParameters
+	multiData := request.MultiValueQueryStringParameters
 
 	destination := queryParams["destination"]
 	budget := queryParams["budget"]
 	activityLevel := queryParams["activityLevel"]
-	activityTypes := queryParams["activityTypes"]
-	resturantTypes := queryParams["resturantTypes"]
+	activityTypes := multiData["activityTypes"]
+	resturantTypes := multiData["resturantTypes"]
 	radiusMiles := queryParams["radiusMiles"]
 	numDays := queryParams["numDays"]
 
@@ -127,7 +129,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	session := model.StartChat()
 	session.History = []*genai.Content{}
 
-	prompt := fmt.Sprintf(os.Getenv("prompt"), destination, budget, activityLevel, activityTypes, resturantTypes, radiusMiles, numDays)
+	prompt := fmt.Sprintf(os.Getenv("prompt"), destination, budget, activityLevel, strings.Join(activityTypes, ","), strings.Join(resturantTypes, ","), radiusMiles, numDays)
 	fmt.Printf(prompt)
 	resp, err := session.SendMessage(ctx, genai.Text(prompt))
 	if err != nil {
