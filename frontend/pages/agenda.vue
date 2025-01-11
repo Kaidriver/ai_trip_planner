@@ -10,7 +10,7 @@
         <div class="error-message" v-if="state=='error'">
             <h1>Error Loading Agenda</h1>
             <div class = "return-btn">
-                <button type="button" class="btn"><a href="/">Return Home</a></button>
+                <NuxtLink to="/"><button type="button" class="btn error-button">Return Home</button></NuxtLink>
             </div>
         </div>
 
@@ -313,7 +313,7 @@ h1 {
     font-size: 500%;
 }
 
-.error-message a {
+.error-button {
     text-decoration: none;
     background-image: linear-gradient(270deg, #FF417A 40%, #5596FF 85%);
     background-clip: text;
