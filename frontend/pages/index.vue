@@ -56,7 +56,7 @@
                 </div>
 
                 <div class = "gradient-input input-submit-btn">
-                    <UButton type="submit" color="white" class="submit-btn" block>
+                    <UButton type="submit" color="white" variant="ghost" class="submit-btn" block>
                         Submit
                     </UButton>
                 </div>

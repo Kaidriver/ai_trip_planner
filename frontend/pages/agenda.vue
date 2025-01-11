@@ -1,10 +1,23 @@
 <template>
     <div class = "container">
+        <div class="loading-animation" v-if="state=='loading'">
+            <video autoplay>
+                <source src="~/assets/loading-animation.webm" type="video/webm">
+            </video>
+            <h5>Generating...</h5>
+        </div>
+
+        <div class="error-message" v-if="state=='error'">
+            <h1>Error Loading Agenda</h1>
+            <div class = "return-btn">
+                <button type="button" class="btn"><a href="/">Return Home</a></button>
+            </div>
+        </div>
 
         <h1 id="header-text"></h1>
         <h1 id="sub-header-text"></h1>
 
-        <div v-if="loaded" class = "row content-block">
+        <div v-if="state=='loaded'" class = "row content-block">
             <div class="days-display">
                 <h5 v-for="(item, index) in agenda" @click="currentDay = agenda[index]">Day {{ index + 1 }}</h5>
             </div>
@@ -80,6 +93,7 @@
 </template>
 
 <script setup lang="ts">
+    import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
     interface Activity {
         name: string,
         description: string,
@@ -100,68 +114,78 @@
     const agenda = ref<DayAgenda[]>([])
 
     const currentDay = ref<DayAgenda>(<DayAgenda> {})
-    const loaded = ref(false)
+    const state = ref("")
+    const route = useRoute()
 
     function timeout(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     onMounted(async () => {
-        const route = useRoute()
-        
-        const { data, status, error, refresh, clear } = await useFetch(config.public.prod_endpoint, {
-            method: "GET",
-            query: route.query,
-            headers: {"x-api-key": config.public.secret},
-        })
 
-        agenda.value = <DayAgenda[]> data.value
-        currentDay.value = agenda.value[0]
+        if (Object.hasOwn(route.query, 'destination') && Object.hasOwn(route.query, 'budget') &&
+            Object.hasOwn(route.query, 'activityLevel') && Object.hasOwn(route.query, 'radiusMiles') && 
+            Object.hasOwn(route.query, 'numDays')) {
+            state.value = "loading"
+            const { data, status, error, refresh, clear } = await useFetch(config.public.prod_endpoint, {
+                method: "GET",
+                query: route.query,
+                headers: {"x-api-key": config.public.secret},
+            })
 
-       let headerText = 'Welcome to ' + route.query.destination;
-        
-        let headerTextElements = headerText.split("").map((c) => {
-            let spanElement = document.createElement('span')
-            spanElement.appendChild(document.createTextNode(c))
-            spanElement.style.display = 'hidden'
-            return spanElement
-        });
-        
-        let el = document.getElementById("header-text");
- 
-        await (async () => {
-            for (let i = 0; i < headerTextElements.length; i++) {
-                let e = headerTextElements[i]
-                el!.append(e);
-                e.style.display = 'initial'
-                
-                await timeout(85)
-            }
-        })();
+            agenda.value = <DayAgenda[]> data.value
+            currentDay.value = agenda.value[0]
 
-        let subElText = 'Here is your ' + agenda.value.length + ' day itinerary';
-        console.log(agenda)
+            state.value = 'startLoading'
+            
+            let headerText = 'Welcome to ' + route.query.destination;
+            
+            let headerTextElements = headerText.split("").map((c) => {
+                let spanElement = document.createElement('span')
+                spanElement.appendChild(document.createTextNode(c))
+                spanElement.style.display = 'hidden'
+                return spanElement
+            });
+            
+            let el = document.getElementById("header-text");
+    
+            await (async () => {
+                for (let i = 0; i < headerTextElements.length; i++) {
+                    let e = headerTextElements[i]
+                    el!.append(e);
+                    e.style.display = 'initial'
+                    
+                    await timeout(85)
+                }
+            })();
 
-        let subElTextElements = subElText.split("").map((c) => {
-            let spanElement = document.createElement('span')
-            spanElement.appendChild(document.createTextNode(c))
-            spanElement.style.display = 'hidden'
-            return spanElement
-        });
+            let subElText = 'Here is your ' + agenda.value.length + ' day itinerary';
+            console.log(agenda)
 
-        let subEl = document.getElementById("sub-header-text");
+            let subElTextElements = subElText.split("").map((c) => {
+                let spanElement = document.createElement('span')
+                spanElement.appendChild(document.createTextNode(c))
+                spanElement.style.display = 'hidden'
+                return spanElement
+            });
 
-        await (async () => {
-            for (let i = 0; i < subElTextElements.length; i++) {
-                let e = subElTextElements[i]
-                subEl!.append(e);
-                e.style.display = 'initial'
-                
-                await timeout(85)
-            }
-        })();
-        
-        loaded.value = true
+            let subEl = document.getElementById("sub-header-text");
+
+            await (async () => {
+                for (let i = 0; i < subElTextElements.length; i++) {
+                    let e = subElTextElements[i]
+                    subEl!.append(e);
+                    e.style.display = 'initial'
+                    
+                    await timeout(85)
+                }
+            })();
+            
+            state.value = "loaded"
+        }
+        else {
+            state.value = 'error'
+        }
     })
     
 
@@ -185,13 +209,30 @@ h1 {
     color: transparent;
 }
 
-span {
-    animation-name: fadeInOpacity;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: 0.5s;
+.loading-animation {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12em;
 }
 
+.loading-animation h5 {
+    position: relative;
+    left: 10%;
+    white-space: nowrap; /* Keeps the content on a single line */
+    background-image: linear-gradient(270deg, #FF417A 40%, #5596FF 85%);
+    background-clip: text;
+    color: transparent;
+    font-family: 'Readex Pro';
+    animation: typing 2.5s steps(40, end) infinite
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
 
 @keyframes fadeInOpacity {
 	0% {
@@ -226,6 +267,57 @@ span {
   mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
   z-index: -1;
+}
+
+.btn {
+    width: 100%;
+}
+
+.return-btn {
+  position: relative;
+  backdrop-filter: blur(10px);
+  padding: 4px;
+  width: 10em;
+  transition: 0.2s;
+  margin: 0 auto;
+  margin-top: 3%;
+}
+
+.return-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: linear-gradient(140deg, #FF417A 40%, #5596FF 70%) border-box;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  z-index: -1;
+}
+
+.return-btn:hover {
+    transform: scale(1.1);
+}
+
+.error-message {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+}
+
+.error-message h1 {
+    font-size: 500%;
+}
+
+.error-message a {
+    text-decoration: none;
+    background-image: linear-gradient(270deg, #FF417A 40%, #5596FF 85%);
+    background-clip: text;
+    color: transparent;
 }
 
 .meals-col .card {
@@ -281,7 +373,7 @@ span {
 	animation-duration: 0.5s;
 }
 
-.activities-col .row .col-md-6:not(:first-child, :nth-child(2)) {
+.activities-col .row .col-md-6:not(:nth-child(2), :nth-child(3)) {
     margin-top: 3%;
 }
 
