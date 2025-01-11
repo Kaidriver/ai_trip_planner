@@ -216,7 +216,7 @@ input[type=number] {
   content: "";
   position: absolute;
   inset: 0;
-  border: 3.5px solid transparent;
+  border: 2px solid transparent;
   border-radius: 12px;
   background: linear-gradient(140deg, #FF417A 40%, #5596FF 70%) border-box;
   mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
