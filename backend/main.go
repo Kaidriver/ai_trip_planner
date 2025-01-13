@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -32,7 +31,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
-		log.Fatalf("Error creating client: %v", err)
+		fmt.Printf("Error creating client: %v", err)
 		return events.APIGatewayProxyResponse{StatusCode: 400, Headers: map[string]string{
 			"Access-Control-Allow-Origin":      "*",
 			"Access-Control-Allow-Credentials": "true",
@@ -47,6 +46,35 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	model.SetTopP(0.95)
 	model.SetMaxOutputTokens(8192)
 	model.ResponseMIMEType = "application/json"
+
+	classificationSchema := &genai.Schema{
+		Type: genai.TypeBoolean,
+	}
+
+	model.ResponseSchema = classificationSchema
+	session := model.StartChat()
+
+	classificationPrompt := fmt.Sprintf(os.Getenv("classificationPrompt"), destination)
+	fmt.Println(classificationPrompt)
+	resp, err := session.SendMessage(ctx, genai.Text(classificationPrompt))
+	if err != nil {
+		fmt.Printf("Error sending message: %v", err)
+		return events.APIGatewayProxyResponse{StatusCode: 400, Headers: map[string]string{
+			"Access-Control-Allow-Origin":      "*",
+			"Access-Control-Allow-Credentials": "true",
+		}}, err
+	}
+
+	if txt, ok := resp.Candidates[0].Content.Parts[0].(genai.Text); ok {
+		fmt.Printf(string(txt))
+		if string(txt) == "false" {
+			fmt.Printf("Invalid destination: %v", err)
+			return events.APIGatewayProxyResponse{StatusCode: 400, Headers: map[string]string{
+				"Access-Control-Allow-Origin":      "*",
+				"Access-Control-Allow-Credentials": "true",
+			}}, err
+		}
+	}
 
 	activitySchema := &genai.Schema{
 		Type: genai.TypeObject,
@@ -135,14 +163,11 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		Items: dayAgendaSchema,
 	}
 
-	session := model.StartChat()
-	session.History = []*genai.Content{}
-
-	prompt := fmt.Sprintf(os.Getenv("prompt"), destination, budget, activityLevel, strings.Join(activityTypes, ","), strings.Join(resturantTypes, ","), radiusMiles, numDays)
+	prompt := fmt.Sprintf(os.Getenv("agendaPrompt"), destination, budget, activityLevel, strings.Join(activityTypes, ","), strings.Join(resturantTypes, ","), radiusMiles, numDays)
 	fmt.Printf(prompt)
-	resp, err := session.SendMessage(ctx, genai.Text(prompt))
+	resp, err = session.SendMessage(ctx, genai.Text(prompt))
 	if err != nil {
-		log.Fatalf("Error sending message: %v", err)
+		fmt.Printf("Error sending message: %v", err)
 		return events.APIGatewayProxyResponse{StatusCode: 400, Headers: map[string]string{
 			"Access-Control-Allow-Origin":      "*",
 			"Access-Control-Allow-Credentials": "true",

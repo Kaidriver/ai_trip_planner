@@ -122,7 +122,6 @@
     }
 
     onMounted(async () => {
-
         if (Object.hasOwn(route.query, 'destination') && Object.hasOwn(route.query, 'budget') &&
             Object.hasOwn(route.query, 'activityLevel') && Object.hasOwn(route.query, 'radiusMiles') && 
             Object.hasOwn(route.query, 'numDays')) {
@@ -133,55 +132,60 @@
                 headers: {"x-api-key": config.public.secret},
             })
 
-            agenda.value = <DayAgenda[]> data.value
-            currentDay.value = agenda.value[0]
+            if (error.value != undefined) {
+                state.value = "error"
+            }
+            else {
+                agenda.value = <DayAgenda[]> data.value
+                currentDay.value = agenda.value[0]
 
-            state.value = 'startLoading'
-            
-            let headerText = 'Welcome to ' + route.query.destination;
-            
-            let headerTextElements = headerText.split("").map((c) => {
-                let spanElement = document.createElement('span')
-                spanElement.appendChild(document.createTextNode(c))
-                spanElement.style.display = 'hidden'
-                return spanElement
-            });
-            
-            let el = document.getElementById("header-text");
-    
-            await (async () => {
-                for (let i = 0; i < headerTextElements.length; i++) {
-                    let e = headerTextElements[i]
-                    el!.append(e);
-                    e.style.display = 'initial'
-                    
-                    await timeout(85)
-                }
-            })();
+                state.value = "startLoading"
+                
+                let headerText = 'Welcome to ' + route.query.destination;
+                
+                let headerTextElements = headerText.split("").map((c) => {
+                    let spanElement = document.createElement('span')
+                    spanElement.appendChild(document.createTextNode(c))
+                    spanElement.style.display = 'hidden'
+                    return spanElement
+                });
+                
+                let el = document.getElementById("header-text");
+        
+                await (async () => {
+                    for (let i = 0; i < headerTextElements.length; i++) {
+                        let e = headerTextElements[i]
+                        el!.append(e);
+                        e.style.display = 'initial'
+                        
+                        await timeout(85)
+                    }
+                })();
 
-            let subElText = 'Here is your ' + agenda.value.length + ' day itinerary';
-            console.log(agenda)
+                let subElText = 'Here is your ' + agenda.value.length + ' day itinerary';
+                console.log(agenda)
 
-            let subElTextElements = subElText.split("").map((c) => {
-                let spanElement = document.createElement('span')
-                spanElement.appendChild(document.createTextNode(c))
-                spanElement.style.display = 'hidden'
-                return spanElement
-            });
+                let subElTextElements = subElText.split("").map((c) => {
+                    let spanElement = document.createElement('span')
+                    spanElement.appendChild(document.createTextNode(c))
+                    spanElement.style.display = 'hidden'
+                    return spanElement
+                });
 
-            let subEl = document.getElementById("sub-header-text");
+                let subEl = document.getElementById("sub-header-text");
 
-            await (async () => {
-                for (let i = 0; i < subElTextElements.length; i++) {
-                    let e = subElTextElements[i]
-                    subEl!.append(e);
-                    e.style.display = 'initial'
-                    
-                    await timeout(85)
-                }
-            })();
-            
-            state.value = "loaded"
+                await (async () => {
+                    for (let i = 0; i < subElTextElements.length; i++) {
+                        let e = subElTextElements[i]
+                        subEl!.append(e);
+                        e.style.display = 'initial'
+                        
+                        await timeout(85)
+                    }
+                })();
+                
+                state.value = "loaded"
+            }
         }
         else {
             state.value = 'error'
