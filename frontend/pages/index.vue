@@ -77,7 +77,7 @@
     const schema = object({
         radiusMiles: number().min(0).max(500).required(),
         numDays: number().integer().min(1).max(7).required(),
-        destination: string().required(),
+        destination: string().max(50).required(),
         budget: string().required(),
         activityLevel: string().required(),
         activityTypes: array(),
@@ -111,7 +111,7 @@
     const errorText = ref("")
     async function onError(event: ErrorEvent) {
         console.log(event)
-        errorText.value = "Please make sure everything is filled out and days is less than 8."
+        errorText.value = "Destination length must be less than 50 characters, days less than 8 and miles less than 500"
     }
 </script>
 
