@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['~/assets/main.scss'],
   modules: ['@nuxt/ui'],
+  ssr: false,
   runtimeConfig: {
     public: {
       secret: process.env.API_KEY,
