@@ -87,8 +87,8 @@
     type Schema = InferType<typeof schema>
     
     const levels = ['Low', 'Medium', 'High']
-    const activities = ['Shopping', 'Outdoors', 'Nightlife', 'Museums', 'Thrill']
-    const resturants = ['Chinese', 'Mexican', 'American', 'Italian', 'Korean', 'Japanese', 'Indian', 'Thai']
+    const activities = ['Shopping', 'Outdoors', 'Nightlife', 'Museums', 'Thrill', 'Relaxation', 'Water']
+    const resturants = ['Chinese', 'Mexican', 'American', 'Italian', 'Korean', 'Japanese', 'Indian', 'Thai', 'French', 'Middle Eastern', 'Spanish', "Greek"]
 
     const state = reactive({
         destination: undefined,
@@ -185,7 +185,12 @@ input[type=number] {
     width: 10%;
 }
 
-.input-resturant, .input-activity-types{
+.input-activity-types {
+    width: 12%;
+    z-index: 2;
+}
+
+.input-resturant {
     width: 12%;
     z-index: 1;
 }
@@ -243,7 +248,6 @@ input[type=number] {
 
     .input-resturant, .input-activity-types{
         width: 13%;
-        z-index: 1;
     }
 }
 
@@ -278,7 +282,6 @@ input[type=number] {
 
     .input-resturant, .input-activity-types{
         width: 35%;
-        z-index: 1;
     }
 
     .input-submit-btn {
