@@ -32,9 +32,6 @@ jobs:
             API_KEY: ${{ secrets.API_KEY }}
         run: NUXT_APP_BASE_URL=/ai_trip_planner/ npx nuxt build --preset github_pages
       - name: Upload artifact
-        env:
-            API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
-            API_KEY: ${{ secrets.API_KEY }}
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./frontend/.output/public
