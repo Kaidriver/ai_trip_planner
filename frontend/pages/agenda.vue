@@ -126,7 +126,6 @@
             Object.hasOwn(route.query, 'activityLevel') && Object.hasOwn(route.query, 'radiusMiles') && 
             Object.hasOwn(route.query, 'numDays')) {
             state.value = "loading"
-            console.log("url: " + config.public.prod_endpoint)
             const { data, status, error, refresh, clear } = await useFetch(config.public.prod_endpoint, {
                 method: "GET",
                 query: route.query,
@@ -164,7 +163,6 @@
                 })();
 
                 let subElText = 'Here is your ' + agenda.value.length + ' day itinerary';
-                console.log(agenda)
 
                 let subElTextElements = subElText.split("").map((c) => {
                     let spanElement = document.createElement('span')

@@ -110,7 +110,6 @@
 
     const errorText = ref("")
     async function onError(event: ErrorEvent) {
-        console.log(event)
         errorText.value = "Destination length must be less than 50 characters, days less than 8 and miles less than 500"
     }
 </script>
