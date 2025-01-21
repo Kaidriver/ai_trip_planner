@@ -18,9 +18,8 @@ jobs:
         with:
           node-version: "20"
       # Pick your own package manager and build script
-      - run: NUXT_APP_BASE_URL=/ai_trip_planner/
       - run: npm install
-      - run: npx nuxt build --prerender
+      - run: NUXT_APP_BASE_URL=/ai_trip_planner/ npx nuxt build --preset github_pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
