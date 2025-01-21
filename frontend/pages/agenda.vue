@@ -126,6 +126,7 @@
             Object.hasOwn(route.query, 'activityLevel') && Object.hasOwn(route.query, 'radiusMiles') && 
             Object.hasOwn(route.query, 'numDays')) {
             state.value = "loading"
+            console.log("url: " + config.public.prod_endpoint)
             const { data, status, error, refresh, clear } = await useFetch(config.public.prod_endpoint, {
                 method: "GET",
                 query: route.query,
