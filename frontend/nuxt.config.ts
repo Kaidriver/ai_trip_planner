@@ -3,6 +3,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-01-13',
   devtools: { enabled: true },
   css: ['~/assets/main.scss'],
+  ssr: false,
   modules: ['@nuxt/ui'],
   runtimeConfig: {
     public: {
