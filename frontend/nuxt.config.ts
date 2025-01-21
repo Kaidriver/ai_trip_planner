@@ -10,4 +10,7 @@ export default defineNuxtConfig({
       prod_endpoint: process.env.API_ENDPOINT,
     }
   },
+  nitro: {
+    preset: 'static'
+  }
 })
