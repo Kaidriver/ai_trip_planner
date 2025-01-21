@@ -43,14 +43,14 @@
                 <div class = "input-row">
                     <span>I want a</span>
                     <div class = "gradient-input input-activity-level">
-                        <USelect v-model="state.activityLevel" :options="levels" variant="none" placeholder=" "/>
+                        <USelect v-model="state.activityLevel" :options="activityLevels" variant="none" placeholder=" "/>
                     </div>
                     <span v-if="width > 800">agenda with a</span>
                     <span v-if="width <= 800">agenda</span>
                     <div class="break"></div>
                     <span v-if="width <= 800">with a</span>
                     <div class = "gradient-input input-budget">
-                        <USelect v-model="state.budget" :options="levels" variant="none" placeholder=" "/>
+                        <USelect v-model="state.budget" :options="budgetLevels" variant="none" placeholder=" "/>
                     </div>
                     <span>budget</span>
                 </div>
@@ -86,7 +86,8 @@
 
     type Schema = InferType<typeof schema>
     
-    const levels = ['Low', 'Medium', 'High']
+    const activityLevels = ['Chill', 'Moderate', 'Packed']
+    const budgetLevels = ['Low', 'Medium', 'High']
     const activities = ['Shopping', 'Outdoors', 'Nightlife', 'Museums', 'Thrill', 'Relaxation', 'Water']
     const resturants = ['Chinese', 'Mexican', 'American', 'Italian', 'Korean', 'Japanese', 'Indian', 'Thai', 'French', 'Middle Eastern', 'Spanish', "Greek"]
 
