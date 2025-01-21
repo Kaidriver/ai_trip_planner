@@ -19,6 +19,11 @@ jobs:
           node-version: "20"
       # Pick your own package manager and build script
       - run: npm install
+      - name: print vars
+        env:
+            API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
+            API_KEY: ${{ secrets.API_KEY }}
+        run: echo $API_KEY
       - name: Build artifact
         env:
             API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
